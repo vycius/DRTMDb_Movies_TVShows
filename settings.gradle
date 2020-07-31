@@ -1,0 +1,2 @@
+include ':app'
+rootProject.name = "DR TMDb Movies & TV Shows"
