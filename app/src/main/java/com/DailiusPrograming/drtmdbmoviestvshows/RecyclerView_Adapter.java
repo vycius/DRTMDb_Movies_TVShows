@@ -45,7 +45,6 @@ public class RecyclerView_Adapter extends RecyclerView.Adapter<RecyclerView_Adap
         //holder.title.setText(movieList.get(position).getOriginal_title());
         //holder.rating.setText(String.valueOf(movieList.get(position).getRating()));
         //holder.genres.setText(getGenres(movieList.get(position).getGenreIds()));
-
     }
 
     @Override
