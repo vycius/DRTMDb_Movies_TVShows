@@ -1,14 +1,29 @@
 package com.DailiusPrograming.drtmdbmoviestvshows;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
 
 public class MovieGsonArray_LVL2 {
     @SerializedName("id")
+    @Expose
     private Integer id;
     @SerializedName("original_title")
+    @Expose
     private String original_title;
     @SerializedName("release_date")
+    @Expose
     private String release_date;
+    @SerializedName("vote_average")
+    @Expose
+    private float rating;
+    @SerializedName("poster_path")
+    @Expose
+    private String posterPath;
+    @SerializedName("genre_ids")
+    @Expose
+    private List<Integer> genreIds;
 
 
     public MovieGsonArray_LVL2(Integer id, String original_title, String release_date) {
@@ -41,5 +56,27 @@ public class MovieGsonArray_LVL2 {
         this.release_date = release_date;
     }
 
+    public float getRating() {
+        return rating;
+    }
 
+    public void setRating(float rating) {
+        this.rating = rating;
+    }
+
+    public String getPosterPath() {
+        return posterPath;
+    }
+
+    public void setPosterPath(String posterPath) {
+        this.posterPath = posterPath;
+    }
+
+    public List<Integer> getGenreIds() {
+        return genreIds;
+    }
+
+    public void setGenreIds(List<Integer> genreIds) {
+        this.genreIds = genreIds;
+    }
 }
