@@ -11,7 +11,12 @@ android {
         versionCode 1
         versionName "1.0"
 
+        // Please ensure you have a valid YOUR_API_KEY for themoviedb.org to use this app
+        // A valid key will need to be entered
+        // should correspond to key/value pairs inside the file
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "API_KEY", API_KEY)
     }
 
     buildTypes {
@@ -20,6 +25,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
 }
 
 dependencies {
