@@ -18,7 +18,7 @@ import java.util.List;
 public class RecyclerView_Adapter extends RecyclerView.Adapter<RecyclerView_Adapter.CustomViewHolder> {
     private List<MovieGsonArray_LVL2> movieList;
     private List<GenreGsonArray_LVL2> allGenres;
-    private String IMAGE_BASE_URL = "http://image.tmdb.org/t/p/w300";
+    private String IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w300";
 
     public RecyclerView_Adapter(List<MovieGsonArray_LVL2> dataList,
                                 List<GenreGsonArray_LVL2> allGenres) {

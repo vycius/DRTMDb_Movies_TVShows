@@ -19,7 +19,7 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity {
     private static final String LANGUAGE = "en-US";
     private InterfaceDataService interfaceDataService;
-    String APIKEY = BuildConfig.API_KEY;
+    String API_KEY = BuildConfig.API_KEY;
 
 
     private List<MovieGsonArray_LVL2> movieList;
@@ -48,11 +48,10 @@ public class MainActivity extends AppCompatActivity {
 
         getGenres();
         showMovies(1);
-
     }
 
     public void showMovies(int page) {
-        service.getMovies("ab66c610c798caaec8c4d5d522c826fd", LANGUAGE, page)
+        service.getMovies(API_KEY, LANGUAGE, page)
                 .enqueue(new Callback<MovieGsonMain_LVL1>() {
                     @Override
                     public void onResponse(Call<MovieGsonMain_LVL1> call,
@@ -74,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void getGenres(){
-        service.getGenres("ab66c610c798caaec8c4d5d522c826fd", LANGUAGE)
+        service.getGenres(API_KEY, LANGUAGE)
                 .enqueue(new Callback<GenreGsonMain_LVL1>() {
                     @Override
                     public void onResponse(Call<GenreGsonMain_LVL1> call,
