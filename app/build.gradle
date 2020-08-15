@@ -17,9 +17,7 @@ android {
 
         // Please ensure you have a valid YOUR_API_KEY for themoviedb.org to use this app
         // A valid key will need to be entered
-        // should correspond to key/value pairs inside the file
         buildConfigField "String", "API_KEY", apikeyProperties['API_KEY']
-
 
     }
 

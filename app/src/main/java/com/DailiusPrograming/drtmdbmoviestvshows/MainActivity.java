@@ -1,12 +1,17 @@
 package com.DailiusPrograming.drtmdbmoviestvshows;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.PopupMenu;
 import android.widget.Toast;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +55,23 @@ public class MainActivity extends AppCompatActivity {
         showMovies(1);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_movies, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.sort:
+                showSortMenu();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     public void showMovies(int page) {
         service.getMovies(API_KEY, LANGUAGE, page)
                 .enqueue(new Callback<MovieGsonMain_LVL1>() {
@@ -88,7 +110,12 @@ public class MainActivity extends AppCompatActivity {
 
                     }
                 });
+    }
 
+    private void showSortMenu(){
+        final PopupMenu sortMenu = new PopupMenu(this, findViewById(R.id.sort));
+        sortMenu.inflate(R.menu.menu_movies_sort);
+        sortMenu.show();
     }
 
 
