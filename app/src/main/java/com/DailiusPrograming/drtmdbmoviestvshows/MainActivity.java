@@ -87,9 +87,7 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onFailure(Call<MovieGsonMain_LVL1> call, Throwable t) {
-                        progressDialog.dismiss();
-                        Toast.makeText(MainActivity.this, "Something went wrong...Please try later!",
-                                Toast.LENGTH_SHORT).show();
+                        errorToast();
                     }
                 });
     }
@@ -107,9 +105,14 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onFailure(Call<GenreGsonMain_LVL1> call, Throwable t) {
-
+                        errorToast();
                     }
                 });
+    }
+    private void errorToast(){
+        progressDialog.dismiss();
+        Toast.makeText(MainActivity.this, "Something went wrong...Please try later!",
+                Toast.LENGTH_SHORT).show();
     }
 
     private void showSortMenu(){
