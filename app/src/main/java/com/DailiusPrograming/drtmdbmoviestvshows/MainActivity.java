@@ -34,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
     private ProgressDialog progressDialog;
 
     private InterfaceDataService service;
+    private int currentPage =1;
+    private boolean fetchingMovies;
 
 
     @Override
@@ -47,12 +49,11 @@ public class MainActivity extends AppCompatActivity {
         progressDialog.show();
 
         recyclerViewList = findViewById(R.id.rvwMovie_RecyclerView);
-        recyclerViewList.setLayoutManager(new LinearLayoutManager(this));
         service = RetrofitClientInstance.getRetrofitInstance()
                 .create(InterfaceDataService.class);
 
+        setupOnScrollListener();
         getGenres();
-        showMovies(1);
     }
 
     @Override
@@ -72,17 +73,28 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void showMovies(int page) {
+    public void showMovies(final int page) {
+        fetchingMovies = true;
         service.getMovies(API_KEY, LANGUAGE, page)
                 .enqueue(new Callback<MovieGsonMain_LVL1>() {
                     @Override
                     public void onResponse(Call<MovieGsonMain_LVL1> call,
                                            Response<MovieGsonMain_LVL1> response) {
-                        customAdapter = new RecyclerView_Adapter(movieList, genreList);
-                        recyclerViewList.setAdapter(customAdapter);
-                        progressDialog.dismiss();
-                        MovieGsonMain_LVL1 moviesGsonResponse = response.body();
-                        customAdapter.setMovieList(moviesGsonResponse.getMovies());
+                        if (customAdapter == null){
+                            customAdapter = new RecyclerView_Adapter(movieList, genreList);
+                            recyclerViewList.setAdapter(customAdapter);
+                            progressDialog.dismiss();
+
+                            responceBodyAndAdapterSetMovies(response);
+
+                        }else{
+                            if(page == 1){
+                                customAdapter.clearMovies();
+                            }
+                            responceBodyAndAdapterSetMovies(response);
+                        }
+                        currentPage = page;
+                        fetchingMovies = false;
                     }
 
                     @Override
@@ -98,9 +110,18 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<GenreGsonMain_LVL1> call,
                                            Response<GenreGsonMain_LVL1> response) {
-                        progressDialog.dismiss();
-                        GenreGsonMain_LVL1 genreGsonMain_lvl1 = response.body();
-                        genreList = genreGsonMain_lvl1.getGenres();
+                        if(response.isSuccessful()){
+                            progressDialog.dismiss();
+                            GenreGsonMain_LVL1 genreGsonMain_lvl1 = response.body();
+                            if(genreGsonMain_lvl1 != null && genreGsonMain_lvl1.getGenres() != null){
+                                genreList = genreGsonMain_lvl1.getGenres();
+                                showMovies(currentPage);
+                            }else{
+                                errorToast();
+                            }
+                        }else {
+                            errorToast();
+                        }
                     }
 
                     @Override
@@ -119,6 +140,30 @@ public class MainActivity extends AppCompatActivity {
         final PopupMenu sortMenu = new PopupMenu(this, findViewById(R.id.sort));
         sortMenu.inflate(R.menu.menu_movies_sort);
         sortMenu.show();
+    }
+
+    private void setupOnScrollListener(){
+        final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        recyclerViewList.setLayoutManager(linearLayoutManager);
+        recyclerViewList.addOnScrollListener(new RecyclerView.OnScrollListener(){
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                int totalItemCount = linearLayoutManager.getItemCount();
+                int visibleItemCount = linearLayoutManager.getChildCount();
+                int firstVisibleItem = linearLayoutManager.findFirstVisibleItemPosition();
+                if (firstVisibleItem + visibleItemCount >= totalItemCount / 2) {
+                    if (!fetchingMovies) {
+                        showMovies(currentPage + 1);
+                    }
+                }
+            }
+        });
+
+
+    }
+    private void responceBodyAndAdapterSetMovies(Response<MovieGsonMain_LVL1> response){
+        MovieGsonMain_LVL1 moviesGsonResponse = response.body();
+        customAdapter.setMovieList(moviesGsonResponse.getMovies());
     }
 
 

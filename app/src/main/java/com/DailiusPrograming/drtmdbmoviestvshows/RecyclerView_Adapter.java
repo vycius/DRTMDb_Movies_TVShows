@@ -27,7 +27,12 @@ public class RecyclerView_Adapter extends RecyclerView.Adapter<RecyclerView_Adap
     }
 
     public void setMovieList(List<MovieGsonArray_LVL2> movieList) {
-        this.movieList = movieList;
+        this.movieList.addAll(movieList);
+        notifyDataSetChanged();
+    }
+
+    public void clearMovies() {
+        movieList.clear();
         notifyDataSetChanged();
     }
 
