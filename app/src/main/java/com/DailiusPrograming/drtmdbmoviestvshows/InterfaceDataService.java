@@ -25,6 +25,13 @@ public interface InterfaceDataService {
             @Query("page") int page
     );
 
+    @GET("movie/now_playing")
+    Call<MovieGsonMain_LVL1> getNowPlayingMovies(
+            @Query("api_key") String apiKey,
+            @Query("language") String language,
+            @Query("page") int page
+    );
+
     @GET("genre/movie/list")
     Call<GenreGsonMain_LVL1> getGenres(
             @Query("api_key") String apiKey,

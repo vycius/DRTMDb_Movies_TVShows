@@ -75,7 +75,7 @@ public class RecyclerView_Adapter extends RecyclerView.Adapter<RecyclerView_Adap
 
         public void bind(MovieGsonArray_LVL2 movies) {
             releaseDate.setText(movies.getRelease_date().split("-")[0]);
-            title.setText(movies.getOriginal_title());
+            title.setText(movies.getTitle());
             rating.setText(String.valueOf(movies.getRating()));
             genres.setText(distGenres(movies.getGenreIds()));
             Glide.with(itemView)

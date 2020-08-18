@@ -9,9 +9,9 @@ public class MovieGsonArray_LVL2 {
     @SerializedName("id")
     @Expose
     private Integer id;
-    @SerializedName("original_title")
+    @SerializedName("title")
     @Expose
-    private String original_title;
+    private String title;
     @SerializedName("release_date")
     @Expose
     private String release_date;
@@ -26,9 +26,9 @@ public class MovieGsonArray_LVL2 {
     private List<Integer> genreIds;
 
 
-    public MovieGsonArray_LVL2(Integer id, String original_title, String release_date) {
+    public MovieGsonArray_LVL2(Integer id, String title, String release_date) {
         this.id = id;
-        this.original_title = original_title;
+        this.title = title;
         this.release_date = release_date;
     }
 
@@ -40,12 +40,12 @@ public class MovieGsonArray_LVL2 {
         this.id = id;
     }
 
-    public String getOriginal_title() {
-        return original_title;
+    public String getTitle() {
+        return title;
     }
 
-    public void setOriginal_title(String original_title) {
-        this.original_title = original_title;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getRelease_date() {

@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String POPULAR = "popular";
     public static final String TOP_RATED = "top_rated";
     public static final String UPCOMING = "upcoming";
+    public static final String NOW_PLAYING = "now_playing";
     private String sortBy = POPULAR;
 
 
@@ -118,6 +119,11 @@ public class MainActivity extends AppCompatActivity {
                 service.getMovies(API_KEY, LANGUAGE, page)
                         .enqueue(callMovies);
                 break;
+            case NOW_PLAYING:
+                service.getNowPlayingMovies(API_KEY, LANGUAGE, page)
+                        .enqueue(callMovies);
+                break;
+
         }
 
 
@@ -179,6 +185,11 @@ public class MainActivity extends AppCompatActivity {
                         sortBy = UPCOMING;
                         showMovies(currentPage, sortBy);
                         return true;
+                    case R.id.now_playing:
+                        sortBy = NOW_PLAYING;
+                        showMovies(currentPage, sortBy);
+                        return true;
+
                     default:
                         return false;
                 }
