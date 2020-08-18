@@ -11,6 +11,19 @@ public interface InterfaceDataService {
       @Query("language") String language,
       @Query("page") int page);
 
+    @GET("movie/top_rated")
+    Call<MovieGsonMain_LVL1> getTopRatedMovies(
+            @Query("api_key") String apiKey,
+            @Query("language") String language,
+            @Query("page") int page
+    );
+
+    @GET("movie/upcoming")
+    Call<MovieGsonMain_LVL1> getUpcomingMovies(
+            @Query("api_key") String apiKey,
+            @Query("language") String language,
+            @Query("page") int page
+    );
 
     @GET("genre/movie/list")
     Call<GenreGsonMain_LVL1> getGenres(

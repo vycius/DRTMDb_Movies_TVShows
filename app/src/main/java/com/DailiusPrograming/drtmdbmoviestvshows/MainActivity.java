@@ -23,8 +23,11 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
     private static final String LANGUAGE = "en-US";
-    private InterfaceDataService interfaceDataService;
     String API_KEY = BuildConfig.API_KEY;
+    public static final String POPULAR = "popular";
+    public static final String TOP_RATED = "top_rated";
+    public static final String UPCOMING = "upcoming";
+    private String sortBy = POPULAR;
 
 
     private List<MovieGsonArray_LVL2> movieList;
@@ -73,10 +76,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void showMovies(final int page) {
+    public void showMovies(final int page, String sortBy) {
         fetchingMovies = true;
-        service.getMovies(API_KEY, LANGUAGE, page)
-                .enqueue(new Callback<MovieGsonMain_LVL1>() {
+        Callback<MovieGsonMain_LVL1> callMovies = new Callback<MovieGsonMain_LVL1>() {
                     @Override
                     public void onResponse(Call<MovieGsonMain_LVL1> call,
                                            Response<MovieGsonMain_LVL1> response) {
@@ -101,7 +103,24 @@ public class MainActivity extends AppCompatActivity {
                     public void onFailure(Call<MovieGsonMain_LVL1> call, Throwable t) {
                         errorToast();
                     }
-                });
+                };
+
+        switch (sortBy) {
+            case TOP_RATED:
+                service.getTopRatedMovies(API_KEY, LANGUAGE, page)
+                        .enqueue(callMovies);
+                break;
+            case UPCOMING:
+                service.getUpcomingMovies(API_KEY, LANGUAGE, page)
+                        .enqueue(callMovies);
+                break;
+            case POPULAR:
+                service.getMovies(API_KEY, LANGUAGE, page)
+                        .enqueue(callMovies);
+                break;
+        }
+
+
     }
 
     public void getGenres(){
@@ -115,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
                             GenreGsonMain_LVL1 genreGsonMain_lvl1 = response.body();
                             if(genreGsonMain_lvl1 != null && genreGsonMain_lvl1.getGenres() != null){
                                 genreList = genreGsonMain_lvl1.getGenres();
-                                showMovies(currentPage);
+                                showMovies(currentPage, sortBy);
                             }else{
                                 errorToast();
                             }
@@ -138,6 +157,34 @@ public class MainActivity extends AppCompatActivity {
 
     private void showSortMenu(){
         final PopupMenu sortMenu = new PopupMenu(this, findViewById(R.id.sort));
+
+        sortMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                /**
+                 * back to page 1 when you choose new sort
+                 **/
+                currentPage = 1;
+
+                switch (item.getItemId()){
+                    case R.id.popular:
+                        sortBy = POPULAR;
+                        showMovies(currentPage, sortBy);
+                        return true;
+                    case R.id.top_rated:
+                        sortBy = TOP_RATED;
+                        showMovies(currentPage, sortBy);
+                        return true;
+                    case R.id.upcoming:
+                        sortBy = UPCOMING;
+                        showMovies(currentPage, sortBy);
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+        });
+
         sortMenu.inflate(R.menu.menu_movies_sort);
         sortMenu.show();
     }
@@ -153,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
                 int firstVisibleItem = linearLayoutManager.findFirstVisibleItemPosition();
                 if (firstVisibleItem + visibleItemCount >= totalItemCount / 2) {
                     if (!fetchingMovies) {
-                        showMovies(currentPage + 1);
+                        showMovies(currentPage + 1, sortBy);
                     }
                 }
             }
