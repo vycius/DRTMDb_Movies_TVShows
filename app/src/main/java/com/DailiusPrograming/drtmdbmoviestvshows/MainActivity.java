@@ -13,6 +13,8 @@ import android.widget.PopupMenu;
 import android.widget.Toast;
 
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,8 +33,8 @@ public class MainActivity extends AppCompatActivity {
     private String sortBy = POPULAR;
 
 
-    private List<MovieGsonArray_LVL2> movieList;
-    private List<GenreGsonArray_LVL2> genreList;
+    private List<MovieRepositoryGetMovieDetails> movieList;
+    private List<GenreRepositoryGetGenreNames> genreList;
     private RecyclerView recyclerViewList;
     private RecyclerView_Adapter customAdapter;
     private ProgressDialog progressDialog;
@@ -68,40 +70,38 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.sort:
-                showSortMenu();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() == R.id.sort) {
+            showSortMenu();
+            return true;
+        } else {
+            return super.onOptionsItemSelected(item);
         }
+
     }
 
     public void showMovies(final int page, String sortBy) {
         fetchingMovies = true;
-        Callback<MovieGsonMain_LVL1> callMovies = new Callback<MovieGsonMain_LVL1>() {
+        Callback<MovieRepository> callMovies = new Callback<MovieRepository>() {
                     @Override
-                    public void onResponse(Call<MovieGsonMain_LVL1> call,
-                                           Response<MovieGsonMain_LVL1> response) {
+                    public void onResponse(@NotNull Call<MovieRepository> call,
+                                           @NotNull Response<MovieRepository> response) {
                         if (customAdapter == null){
                             customAdapter = new RecyclerView_Adapter(movieList, genreList);
                             recyclerViewList.setAdapter(customAdapter);
                             progressDialog.dismiss();
 
-                            responceBodyAndAdapterSetMovies(response);
-
                         }else{
                             if(page == 1){
                                 customAdapter.clearMovies();
                             }
-                            responceBodyAndAdapterSetMovies(response);
                         }
+                        responceBodyAndAdapterSetMovies(response);
                         currentPage = page;
                         fetchingMovies = false;
                     }
 
                     @Override
-                    public void onFailure(Call<MovieGsonMain_LVL1> call, Throwable t) {
+                    public void onFailure(@NotNull Call<MovieRepository> call, @NotNull Throwable t) {
                         errorToast();
                     }
                 };
@@ -131,15 +131,15 @@ public class MainActivity extends AppCompatActivity {
 
     public void getGenres(){
         service.getGenres(API_KEY, LANGUAGE)
-                .enqueue(new Callback<GenreGsonMain_LVL1>() {
+                .enqueue(new Callback<GenreRepository>() {
                     @Override
-                    public void onResponse(Call<GenreGsonMain_LVL1> call,
-                                           Response<GenreGsonMain_LVL1> response) {
+                    public void onResponse(@NotNull Call<GenreRepository> call,
+                                           @NotNull Response<GenreRepository> response) {
                         if(response.isSuccessful()){
                             progressDialog.dismiss();
-                            GenreGsonMain_LVL1 genreGsonMain_lvl1 = response.body();
-                            if(genreGsonMain_lvl1 != null && genreGsonMain_lvl1.getGenres() != null){
-                                genreList = genreGsonMain_lvl1.getGenres();
+                            GenreRepository genreRepository = response.body();
+                            if(genreRepository != null && genreRepository.getGenres() != null){
+                                genreList = genreRepository.getGenres();
                                 showMovies(currentPage, sortBy);
                             }else{
                                 errorToast();
@@ -150,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onFailure(Call<GenreGsonMain_LVL1> call, Throwable t) {
+                    public void onFailure(@NotNull Call<GenreRepository> call, @NotNull Throwable t) {
                         errorToast();
                     }
                 });
@@ -167,9 +167,7 @@ public class MainActivity extends AppCompatActivity {
         sortMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                /**
-                 * back to page 1 when you choose new sort
-                 **/
+
                 currentPage = 1;
 
                 switch (item.getItemId()){
@@ -219,8 +217,9 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
-    private void responceBodyAndAdapterSetMovies(Response<MovieGsonMain_LVL1> response){
-        MovieGsonMain_LVL1 moviesGsonResponse = response.body();
+    private void responceBodyAndAdapterSetMovies(Response<MovieRepository> response){
+        MovieRepository moviesGsonResponse = response.body();
+        assert moviesGsonResponse != null;
         customAdapter.setMovieList(moviesGsonResponse.getMovies());
     }
 

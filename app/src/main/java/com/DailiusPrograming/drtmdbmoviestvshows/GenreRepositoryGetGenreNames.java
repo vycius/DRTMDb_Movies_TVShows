@@ -3,7 +3,7 @@ package com.DailiusPrograming.drtmdbmoviestvshows;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class GenreGsonArray_LVL2 {
+public class GenreRepositoryGetGenreNames {
     @SerializedName("id")
     @Expose
     private int id;

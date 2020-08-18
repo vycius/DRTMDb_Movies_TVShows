@@ -6,34 +6,34 @@ import retrofit2.http.Query;
 
 public interface InterfaceDataService {
     @GET("movie/popular")
-    Call<MovieGsonMain_LVL1> getMovies(
+    Call<MovieRepository> getMovies(
       @Query("api_key") String apiKey,
       @Query("language") String language,
       @Query("page") int page);
 
     @GET("movie/top_rated")
-    Call<MovieGsonMain_LVL1> getTopRatedMovies(
+    Call<MovieRepository> getTopRatedMovies(
             @Query("api_key") String apiKey,
             @Query("language") String language,
             @Query("page") int page
     );
 
     @GET("movie/upcoming")
-    Call<MovieGsonMain_LVL1> getUpcomingMovies(
+    Call<MovieRepository> getUpcomingMovies(
             @Query("api_key") String apiKey,
             @Query("language") String language,
             @Query("page") int page
     );
 
     @GET("movie/now_playing")
-    Call<MovieGsonMain_LVL1> getNowPlayingMovies(
+    Call<MovieRepository> getNowPlayingMovies(
             @Query("api_key") String apiKey,
             @Query("language") String language,
             @Query("page") int page
     );
 
     @GET("genre/movie/list")
-    Call<GenreGsonMain_LVL1> getGenres(
+    Call<GenreRepository> getGenres(
             @Query("api_key") String apiKey,
             @Query("language") String language);
 

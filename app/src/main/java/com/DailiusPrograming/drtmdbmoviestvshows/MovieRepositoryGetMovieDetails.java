@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class MovieGsonArray_LVL2 {
+public class MovieRepositoryGetMovieDetails {
     @SerializedName("id")
     @Expose
     private Integer id;
@@ -26,7 +26,7 @@ public class MovieGsonArray_LVL2 {
     private List<Integer> genreIds;
 
 
-    public MovieGsonArray_LVL2(Integer id, String title, String release_date) {
+    public MovieRepositoryGetMovieDetails(Integer id, String title, String release_date) {
         this.id = id;
         this.title = title;
         this.release_date = release_date;

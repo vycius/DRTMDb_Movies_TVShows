@@ -12,21 +12,22 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class RecyclerView_Adapter extends RecyclerView.Adapter<RecyclerView_Adapter.CustomViewHolder> {
-    private List<MovieGsonArray_LVL2> movieList;
-    private List<GenreGsonArray_LVL2> allGenres;
-    private String IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w300";
+    private List<MovieRepositoryGetMovieDetails> movieList;
+    private List<GenreRepositoryGetGenreNames> allGenres;
 
-    public RecyclerView_Adapter(List<MovieGsonArray_LVL2> dataList,
-                                List<GenreGsonArray_LVL2> allGenres) {
+    public RecyclerView_Adapter(List<MovieRepositoryGetMovieDetails> dataList,
+                                List<GenreRepositoryGetGenreNames> allGenres) {
         this.movieList = dataList;
         this.allGenres = allGenres;
     }
 
-    public void setMovieList(List<MovieGsonArray_LVL2> movieList) {
+    public void setMovieList(List<MovieRepositoryGetMovieDetails> movieList) {
         this.movieList.addAll(movieList);
         notifyDataSetChanged();
     }
@@ -36,6 +37,7 @@ public class RecyclerView_Adapter extends RecyclerView.Adapter<RecyclerView_Adap
         notifyDataSetChanged();
     }
 
+    @NotNull
     @Override
     public RecyclerView_Adapter.CustomViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
@@ -73,11 +75,12 @@ public class RecyclerView_Adapter extends RecyclerView.Adapter<RecyclerView_Adap
             poster = itemView.findViewById(R.id.ivw_Item_Movie_Poster);
         }
 
-        public void bind(MovieGsonArray_LVL2 movies) {
+        public void bind(MovieRepositoryGetMovieDetails movies) {
             releaseDate.setText(movies.getRelease_date().split("-")[0]);
             title.setText(movies.getTitle());
             rating.setText(String.valueOf(movies.getRating()));
             genres.setText(distGenres(movies.getGenreIds()));
+            String IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w300";
             Glide.with(itemView)
                     .load(IMAGE_BASE_URL + movies.getPosterPath())
                     .apply(RequestOptions.placeholderOf(R.color.colorPrimary))
@@ -87,7 +90,7 @@ public class RecyclerView_Adapter extends RecyclerView.Adapter<RecyclerView_Adap
         private String distGenres(List<Integer> genreIds) {
             List<String> movieGenres = new ArrayList<>();
             for (Integer genreId : genreIds) {
-                for (GenreGsonArray_LVL2 genre : allGenres) {
+                for (GenreRepositoryGetGenreNames genre : allGenres) {
                     if (genre.getId() == genreId) {
                         movieGenres.add(genre.getName());
                         break;

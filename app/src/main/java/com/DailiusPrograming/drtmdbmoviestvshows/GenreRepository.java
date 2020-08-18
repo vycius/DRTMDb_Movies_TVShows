@@ -5,16 +5,16 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class GenreGsonMain_LVL1 {
+public class GenreRepository {
     @SerializedName("genres")
     @Expose
-    private List<GenreGsonArray_LVL2> genres;
+    private List<GenreRepositoryGetGenreNames> genres;
 
-    public List<GenreGsonArray_LVL2> getGenres() {
+    public List<GenreRepositoryGetGenreNames> getGenres() {
         return genres;
     }
 
-    public void setGenres(List<GenreGsonArray_LVL2> genres) {
+    public void setGenres(List<GenreRepositoryGetGenreNames> genres) {
         this.genres = genres;
     }
 }

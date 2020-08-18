@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class MovieGsonMain_LVL1 {
+public class MovieRepository {
     @SerializedName("page")
     @Expose
     private int page;
@@ -16,7 +16,7 @@ public class MovieGsonMain_LVL1 {
 
     @SerializedName("results")
     @Expose
-    private List<MovieGsonArray_LVL2> movies;
+    private List<MovieRepositoryGetMovieDetails> movies;
 
     @SerializedName("total_pages")
     @Expose
@@ -38,11 +38,11 @@ public class MovieGsonMain_LVL1 {
         this.totalResults = totalResults;
     }
 
-    public List<MovieGsonArray_LVL2> getMovies() {
+    public List<MovieRepositoryGetMovieDetails> getMovies() {
         return movies;
     }
 
-    public void setMovies(List<MovieGsonArray_LVL2> movies) {
+    public void setMovies(List<MovieRepositoryGetMovieDetails> movies) {
         this.movies = movies;
     }
 
