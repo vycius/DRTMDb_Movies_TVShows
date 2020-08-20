@@ -48,10 +48,6 @@ public class RecyclerView_Adapter extends RecyclerView.Adapter<RecyclerView_Adap
     @Override
     public void onBindViewHolder(RecyclerView_Adapter.CustomViewHolder holder, int position) {
         holder.bind(movieList.get(position));
-        //holder.releaseDate.setText(movieList.get(position).getRelease_date());
-        //holder.title.setText(movieList.get(position).getOriginal_title());
-        //holder.rating.setText(String.valueOf(movieList.get(position).getRating()));
-        //holder.genres.setText(getGenres(movieList.get(position).getGenreIds()));
     }
 
     @Override

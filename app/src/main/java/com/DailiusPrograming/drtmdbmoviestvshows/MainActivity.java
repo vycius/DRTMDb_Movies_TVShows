@@ -2,6 +2,7 @@ package com.DailiusPrograming.drtmdbmoviestvshows;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -50,6 +51,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         movieList = new ArrayList<>();
 
+        Toolbar toolbar = findViewById(R.id.tlb_Toolbar);
+        setSupportActionBar(toolbar);
+
         progressDialog = new ProgressDialog(MainActivity.this);
         progressDialog.setMessage("Loading....");
         progressDialog.show();
@@ -88,16 +92,17 @@ public class MainActivity extends AppCompatActivity {
                         if (customAdapter == null){
                             customAdapter = new RecyclerView_Adapter(movieList, genreList);
                             recyclerViewList.setAdapter(customAdapter);
-                            progressDialog.dismiss();
-
                         }else{
                             if(page == 1){
                                 customAdapter.clearMovies();
                             }
                         }
+                        progressDialog.dismiss();
                         responceBodyAndAdapterSetMovies(response);
                         currentPage = page;
                         fetchingMovies = false;
+
+                        setTitle();
                     }
 
                     @Override
@@ -218,9 +223,27 @@ public class MainActivity extends AppCompatActivity {
 
     }
     private void responceBodyAndAdapterSetMovies(Response<MovieRepository> response){
-        MovieRepository moviesGsonResponse = response.body();
-        assert moviesGsonResponse != null;
-        customAdapter.setMovieList(moviesGsonResponse.getMovies());
+        MovieRepository movieRepository = response.body();
+        assert movieRepository != null;
+        customAdapter.setMovieList(movieRepository.getMovies());
+    }
+
+    private void setTitle() {
+        switch (sortBy) {
+            case POPULAR:
+                setTitle(getString(R.string.popular));
+                break;
+            case TOP_RATED:
+                setTitle(getString(R.string.top_rated));
+                break;
+            case UPCOMING:
+                setTitle(getString(R.string.upcoming));
+                break;
+            case NOW_PLAYING:
+                setTitle(getString(R.string.now_playing));
+                break;
+
+        }
     }
 
 

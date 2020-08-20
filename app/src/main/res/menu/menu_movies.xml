@@ -7,7 +7,7 @@
         android:id="@+id/sort"
         android:enabled="true"
         android:icon="@drawable/ic_sort_white_s_24dp"
-        android:title="Sort"
+        android:title="@string/sort"
         app:showAsAction="always" />
 
 </menu>
