@@ -7,49 +7,36 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
-
-import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
 import java.util.List;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 
 public class MainActivity extends AppCompatActivity {
-    private static final String LANGUAGE = "en-US";
-    String API_KEY = BuildConfig.API_KEY;
-    public static final String POPULAR = "popular";
-    public static final String TOP_RATED = "top_rated";
-    public static final String UPCOMING = "upcoming";
-    public static final String NOW_PLAYING = "now_playing";
-    private String sortBy = POPULAR;
 
-
-    private List<MovieRepositoryGetMovieDetails> movieList;
-    private List<GenreRepositoryGetGenreNames> genreList;
     private RecyclerView recyclerViewList;
     private RecyclerView_Adapter customAdapter;
+
+    private List<GenreRepositoryGetGenreNames> genreList;
+    private RetrofitClientInstance retrofitClientInstance;
+
     private ProgressDialog progressDialog;
 
-    private InterfaceDataService service;
-    private int currentPage =1;
-    private boolean fetchingMovies;
+    private String sortBy = RetrofitClientInstance.POPULAR;
 
+    private int currentPage = 1;
+    private boolean fetchingMovies;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        movieList = new ArrayList<>();
 
         Toolbar toolbar = findViewById(R.id.tlb_Toolbar);
         setSupportActionBar(toolbar);
@@ -58,9 +45,8 @@ public class MainActivity extends AppCompatActivity {
         progressDialog.setMessage("Loading....");
         progressDialog.show();
 
+        retrofitClientInstance = RetrofitClientInstance.getRetrofitInstance();
         recyclerViewList = findViewById(R.id.rvwMovie_RecyclerView);
-        service = RetrofitClientInstance.getRetrofitInstance()
-                .create(InterfaceDataService.class);
 
         setupOnScrollListener();
         getGenres();
@@ -80,93 +66,85 @@ public class MainActivity extends AppCompatActivity {
         } else {
             return super.onOptionsItemSelected(item);
         }
-
     }
 
-    public void showMovies(final int page, String sortBy) {
+    private void setupOnScrollListener() {
+        final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        recyclerViewList.setLayoutManager(linearLayoutManager);
+        recyclerViewList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                int totalItemCount = linearLayoutManager.getItemCount();
+                int visibleItemCount = linearLayoutManager.getChildCount();
+                int firstVisibleItem = linearLayoutManager.findFirstVisibleItemPosition();
+                if (firstVisibleItem + visibleItemCount >= totalItemCount / 2) {
+                    if (!fetchingMovies) {
+                        showMovies(currentPage + 1);
+                    }
+                }
+            }
+        });
+    }
+
+    private void showMovies(int page) {
         fetchingMovies = true;
-        Callback<MovieRepository> callMovies = new Callback<MovieRepository>() {
-                    @Override
-                    public void onResponse(@NotNull Call<MovieRepository> call,
-                                           @NotNull Response<MovieRepository> response) {
-                        if (customAdapter == null){
-                            customAdapter = new RecyclerView_Adapter(movieList, genreList);
-                            recyclerViewList.setAdapter(customAdapter);
-                        }else{
-                            if(page == 1){
-                                customAdapter.clearMovies();
-                            }
-                        }
-                        progressDialog.dismiss();
-                        responceBodyAndAdapterSetMovies(response);
-                        currentPage = page;
-                        fetchingMovies = false;
-
-                        setTitle();
+        retrofitClientInstance.showMovies(page, sortBy, new OnGetMoviesCallback() {
+            @Override
+            public void onSuccess(int page, List<MovieRepositoryGetMovieDetails> movies) {
+                if (customAdapter == null) {
+                    customAdapter = new RecyclerView_Adapter(movies, genreList, callback);
+                    recyclerViewList.setAdapter(customAdapter);
+                } else {
+                    if (page == 1) {
+                        customAdapter.clearMovies();
                     }
+                    customAdapter.setMovieList(movies);
+                }
+                progressDialog.dismiss();
+                currentPage = page;
+                fetchingMovies = false;
 
-                    @Override
-                    public void onFailure(@NotNull Call<MovieRepository> call, @NotNull Throwable t) {
-                        errorToast();
-                    }
-                };
+                setTitle();
+            }
 
-        switch (sortBy) {
-            case TOP_RATED:
-                service.getTopRatedMovies(API_KEY, LANGUAGE, page)
-                        .enqueue(callMovies);
-                break;
-            case UPCOMING:
-                service.getUpcomingMovies(API_KEY, LANGUAGE, page)
-                        .enqueue(callMovies);
-                break;
-            case POPULAR:
-                service.getMovies(API_KEY, LANGUAGE, page)
-                        .enqueue(callMovies);
-                break;
-            case NOW_PLAYING:
-                service.getNowPlayingMovies(API_KEY, LANGUAGE, page)
-                        .enqueue(callMovies);
-                break;
+            @Override
+            public void onError() {
+                errorToast();
+            }
+        });
+    }
 
+    OnMoviesClickCallback callback = new OnMoviesClickCallback() {
+        @Override
+        public void onClick(MovieRepositoryGetMovieDetails movieDetails) {
+            Intent intent = new Intent(MainActivity.this, MovieActivity.class);
+            intent.putExtra(MovieActivity.MOVIE_ID, movieDetails.getId());
+            startActivity(intent);
         }
+    };
 
+    public void getGenres() {
+         retrofitClientInstance.getGenres(new OnGetGenresCallback() {
+             @Override
+             public void onSuccess(List<GenreRepositoryGetGenreNames> genres) {
+                 genreList = genres;
+                 showMovies(currentPage);
+             }
 
+             @Override
+             public void onError() {
+                 errorToast();
+             }
+         });
     }
 
-    public void getGenres(){
-        service.getGenres(API_KEY, LANGUAGE)
-                .enqueue(new Callback<GenreRepository>() {
-                    @Override
-                    public void onResponse(@NotNull Call<GenreRepository> call,
-                                           @NotNull Response<GenreRepository> response) {
-                        if(response.isSuccessful()){
-                            progressDialog.dismiss();
-                            GenreRepository genreRepository = response.body();
-                            if(genreRepository != null && genreRepository.getGenres() != null){
-                                genreList = genreRepository.getGenres();
-                                showMovies(currentPage, sortBy);
-                            }else{
-                                errorToast();
-                            }
-                        }else {
-                            errorToast();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(@NotNull Call<GenreRepository> call, @NotNull Throwable t) {
-                        errorToast();
-                    }
-                });
-    }
-    private void errorToast(){
+    private void errorToast() {
         progressDialog.dismiss();
         Toast.makeText(MainActivity.this, "Something went wrong...Please try later!",
                 Toast.LENGTH_SHORT).show();
     }
 
-    private void showSortMenu(){
+    private void showSortMenu() {
         final PopupMenu sortMenu = new PopupMenu(this, findViewById(R.id.sort));
 
         sortMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -175,24 +153,23 @@ public class MainActivity extends AppCompatActivity {
 
                 currentPage = 1;
 
-                switch (item.getItemId()){
+                switch (item.getItemId()) {
                     case R.id.popular:
-                        sortBy = POPULAR;
-                        showMovies(currentPage, sortBy);
+                        sortBy =  RetrofitClientInstance.POPULAR;
+                        showMovies(currentPage);
                         return true;
                     case R.id.top_rated:
-                        sortBy = TOP_RATED;
-                        showMovies(currentPage, sortBy);
+                        sortBy = RetrofitClientInstance.TOP_RATED;
+                        showMovies(currentPage);
                         return true;
                     case R.id.upcoming:
-                        sortBy = UPCOMING;
-                        showMovies(currentPage, sortBy);
+                        sortBy = RetrofitClientInstance.UPCOMING;
+                        showMovies(currentPage);
                         return true;
                     case R.id.now_playing:
-                        sortBy = NOW_PLAYING;
-                        showMovies(currentPage, sortBy);
+                        sortBy = RetrofitClientInstance.NOW_PLAYING;
+                        showMovies(currentPage);
                         return true;
-
                     default:
                         return false;
                 }
@@ -203,48 +180,21 @@ public class MainActivity extends AppCompatActivity {
         sortMenu.show();
     }
 
-    private void setupOnScrollListener(){
-        final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        recyclerViewList.setLayoutManager(linearLayoutManager);
-        recyclerViewList.addOnScrollListener(new RecyclerView.OnScrollListener(){
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                int totalItemCount = linearLayoutManager.getItemCount();
-                int visibleItemCount = linearLayoutManager.getChildCount();
-                int firstVisibleItem = linearLayoutManager.findFirstVisibleItemPosition();
-                if (firstVisibleItem + visibleItemCount >= totalItemCount / 2) {
-                    if (!fetchingMovies) {
-                        showMovies(currentPage + 1, sortBy);
-                    }
-                }
-            }
-        });
-
-
-    }
-    private void responceBodyAndAdapterSetMovies(Response<MovieRepository> response){
-        MovieRepository movieRepository = response.body();
-        assert movieRepository != null;
-        customAdapter.setMovieList(movieRepository.getMovies());
-    }
-
     private void setTitle() {
         switch (sortBy) {
-            case POPULAR:
+            case RetrofitClientInstance.POPULAR:
                 setTitle(getString(R.string.popular));
                 break;
-            case TOP_RATED:
+            case RetrofitClientInstance.TOP_RATED:
                 setTitle(getString(R.string.top_rated));
                 break;
-            case UPCOMING:
+            case RetrofitClientInstance.UPCOMING:
                 setTitle(getString(R.string.upcoming));
                 break;
-            case NOW_PLAYING:
+            case RetrofitClientInstance.NOW_PLAYING:
                 setTitle(getString(R.string.now_playing));
                 break;
 
         }
     }
-
-
 }

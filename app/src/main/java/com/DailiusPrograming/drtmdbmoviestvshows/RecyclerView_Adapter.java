@@ -20,11 +20,14 @@ import java.util.List;
 public class RecyclerView_Adapter extends RecyclerView.Adapter<RecyclerView_Adapter.CustomViewHolder> {
     private List<MovieRepositoryGetMovieDetails> movieList;
     private List<GenreRepositoryGetGenreNames> allGenres;
+    private OnMoviesClickCallback callback;
 
-    public RecyclerView_Adapter(List<MovieRepositoryGetMovieDetails> dataList,
-                                List<GenreRepositoryGetGenreNames> allGenres) {
-        this.movieList = dataList;
+    public RecyclerView_Adapter(List<MovieRepositoryGetMovieDetails> movieList,
+                                List<GenreRepositoryGetGenreNames> allGenres,
+                                OnMoviesClickCallback callback) {
+        this.movieList = movieList;
         this.allGenres = allGenres;
+        this.callback = callback;
     }
 
     public void setMovieList(List<MovieRepositoryGetMovieDetails> movieList) {
@@ -61,6 +64,7 @@ public class RecyclerView_Adapter extends RecyclerView.Adapter<RecyclerView_Adap
         TextView rating;
         TextView genres;
         ImageView poster;
+        MovieRepositoryGetMovieDetails movieDetails;
 
         public CustomViewHolder(View itemView) {
             super(itemView);
@@ -69,6 +73,12 @@ public class RecyclerView_Adapter extends RecyclerView.Adapter<RecyclerView_Adap
             rating = itemView.findViewById(R.id.txt_Item_Movie_Rating);
             genres = itemView.findViewById(R.id.txt_Item_Movie_Genre);
             poster = itemView.findViewById(R.id.ivw_Item_Movie_Poster);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    callback.onClick(movieDetails);
+                }
+            });
         }
 
         public void bind(MovieRepositoryGetMovieDetails movies) {
@@ -81,6 +91,7 @@ public class RecyclerView_Adapter extends RecyclerView.Adapter<RecyclerView_Adap
                     .load(IMAGE_BASE_URL + movies.getPosterPath())
                     .apply(RequestOptions.placeholderOf(R.color.colorPrimary))
                     .into(poster);
+            this.movieDetails = movies;
         }
 
         private String distGenres(List<Integer> genreIds) {

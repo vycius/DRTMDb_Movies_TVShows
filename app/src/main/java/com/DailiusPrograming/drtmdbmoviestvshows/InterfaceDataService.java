@@ -2,11 +2,12 @@ package com.DailiusPrograming.drtmdbmoviestvshows;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface InterfaceDataService {
     @GET("movie/popular")
-    Call<MovieRepository> getMovies(
+    Call<MovieRepository> getPopularMovies(
       @Query("api_key") String apiKey,
       @Query("language") String language,
       @Query("page") int page);
@@ -30,6 +31,13 @@ public interface InterfaceDataService {
             @Query("api_key") String apiKey,
             @Query("language") String language,
             @Query("page") int page
+    );
+
+    @GET("movie/{movie_id}")
+    Call<MovieRepositoryGetMovieDetails> getMovie(
+            @Path("movie_id") int id,
+            @Query("api_key") String apiKey,
+            @Query("language") String language
     );
 
     @GET("genre/movie/list")
