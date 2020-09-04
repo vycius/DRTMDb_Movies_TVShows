@@ -45,5 +45,12 @@ public interface InterfaceDataService {
             @Query("api_key") String apiKey,
             @Query("language") String language);
 
+    @GET("movie/{movie_id}/videos")
+    Call<TrailerRepository> getTrailers(
+            @Path("movie_id") int id,
+            @Query("api_key") String apiKey,
+            @Query("language") String language
+    );
+
 }
 

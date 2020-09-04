@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
 
     private List<GenreRepositoryGetGenreNames> genreList;
     private RetrofitClientInstance retrofitClientInstance;
+    private OnMoviesClickCallback onMoviesClickCallback;
 
     private ProgressDialog progressDialog;
 
@@ -47,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
 
         retrofitClientInstance = RetrofitClientInstance.getRetrofitInstance();
         recyclerViewList = findViewById(R.id.rvwMovie_RecyclerView);
+
+
 
         setupOnScrollListener();
         getGenres();
@@ -92,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(int page, List<MovieRepositoryGetMovieDetails> movies) {
                 if (customAdapter == null) {
-                    customAdapter = new RecyclerView_Adapter(movies, genreList, callback);
+                    customAdapter = new RecyclerView_Adapter(movies, genreList, onMoviesClickCallback);
                     recyclerViewList.setAdapter(customAdapter);
                 } else {
                     if (page == 1) {
@@ -112,16 +115,17 @@ public class MainActivity extends AppCompatActivity {
                 errorToast();
             }
         });
-    }
 
-    OnMoviesClickCallback callback = new OnMoviesClickCallback() {
-        @Override
-        public void onClick(MovieRepositoryGetMovieDetails movieDetails) {
-            Intent intent = new Intent(MainActivity.this, MovieActivity.class);
-            intent.putExtra(MovieActivity.MOVIE_ID, movieDetails.getId());
-            startActivity(intent);
-        }
-    };
+        onMoviesClickCallback = new OnMoviesClickCallback() {
+            @Override
+            public void onClick(MovieRepositoryGetMovieDetails movieDetails) {
+                Intent intent = new Intent(MainActivity.this, MovieActivity.class);
+                intent.putExtra(MovieActivity.MOVIE_ID, movieDetails.getId());
+                startActivity(intent);
+            }
+        };
+
+    }
 
     public void getGenres() {
          retrofitClientInstance.getGenres(new OnGetGenresCallback() {
@@ -197,4 +201,6 @@ public class MainActivity extends AppCompatActivity {
 
         }
     }
+
+
 }

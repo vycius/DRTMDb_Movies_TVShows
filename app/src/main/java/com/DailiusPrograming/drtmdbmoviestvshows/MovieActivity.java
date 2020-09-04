@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -24,8 +26,8 @@ public class MovieActivity extends AppCompatActivity {
     public static String MOVIE_ID = "movie_id";
 
     private static String IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w780";
-    //private static String YOUTUBE_VIDEO_URL = "http://www.youtube.com/watch?v=%s";
-    //private static String YOUTUBE_THUMBNAIL_URL = "http://img.youtube.com/vi/%s/0.jpg";
+    private static String YOUTUBE_VIDEO_URL = "http://www.youtube.com/watch?v=%s";
+    private static String YOUTUBE_THUMBNAIL_URL = "https://img.youtube.com/vi/%s/0.jpg";
 
     private ImageView movieBackdrop;
     private TextView movieTitle;
@@ -33,6 +35,7 @@ public class MovieActivity extends AppCompatActivity {
     private TextView movieOverview;
     private TextView movieOverviewLabel;
     private TextView movieReleaseDate;
+    private TextView trailersLabel;
     private RatingBar movieRating;
     private LinearLayout movieTrailers;
     private LinearLayout movieReviews;
@@ -80,6 +83,7 @@ public class MovieActivity extends AppCompatActivity {
         movieRating = findViewById(R.id.rbr_Movie_Details_Rating);
         movieTrailers = findViewById(R.id.lly_Movie_Trailers);
         movieReviews = findViewById(R.id.lly_Movie_Reviews);
+        trailersLabel = findViewById(R.id.txt_Trailers_Label);
     }
 
     public void showMovieDetails () {
@@ -99,6 +103,7 @@ public class MovieActivity extends AppCompatActivity {
                             .apply(RequestOptions.placeholderOf(R.color.colorPrimary))
                             .into(movieBackdrop);
                 }
+                getTrailers(movieDtls);
                 progressDialog.dismiss();
             }
 
@@ -129,6 +134,44 @@ public class MovieActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void getTrailers(MovieRepositoryGetMovieDetails movieDetails){
+        retrofitClientInstance.getTrailers(movieDetails.getId(), new OnGetTrailersCallback() {
+            @Override
+            public void onSuccess(List<TrailerRepositoryGetKey> trailersGetKey) {
+                trailersLabel.setVisibility(View.VISIBLE);
+                movieTrailers.removeAllViews();
+                for(final TrailerRepositoryGetKey trailerKey: trailersGetKey){
+                    View parent = getLayoutInflater().inflate(R.layout.thumbnail_trailer, movieTrailers, false);
+                    ImageView thumbnail = parent.findViewById(R.id.thumbnail);
+                    thumbnail.requestLayout();
+                    thumbnail.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            showTrailer(String.format(YOUTUBE_VIDEO_URL, trailerKey.getKey()));
+                        }
+                    });
+                    Glide.with(MovieActivity.this)
+                            .load(String.format(YOUTUBE_THUMBNAIL_URL, trailerKey.getKey()))
+                            .apply(RequestOptions.placeholderOf(R.color.colorPrimary).centerCrop())
+                            .into(thumbnail);
+                    movieTrailers.addView(parent);
+                }
+            }
+
+            @Override
+            public void onError() {
+                trailersLabel.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    private void showTrailer(String url) {
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        startActivity(intent);
+    }
+
+
 
     @Override
     public boolean onSupportNavigateUp() {

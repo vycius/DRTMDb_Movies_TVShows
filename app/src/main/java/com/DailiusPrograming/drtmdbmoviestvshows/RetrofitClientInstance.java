@@ -128,11 +128,31 @@ public class RetrofitClientInstance {
                 break;
         }
 
-
-
     }
 
+    public void getTrailers(int movieId, final OnGetTrailersCallback callback){
+        itfApi.getTrailers(movieId,API_KEY, LANGUAGE)
+                .enqueue(new Callback<TrailerRepository>() {
+                    @Override
+                    public void onResponse(@NotNull Call<TrailerRepository> call, @NotNull Response<TrailerRepository> response) {
+                        if(response.isSuccessful()){
+                            TrailerRepository trailerRepository = response.body();
+                            if(trailerRepository != null && trailerRepository.getTrailers() != null){
+                                callback.onSuccess(trailerRepository.getTrailers());
+                            }else {
+                                callback.onError();
+                            }
+                        }else {
+                            callback.onError();
+                        }
+                    }
 
+                    @Override
+                    public void onFailure(@NotNull Call<TrailerRepository> call, @NotNull Throwable t) {
+                        callback.onError();
+                    }
+                });
+    }
 
 
 
