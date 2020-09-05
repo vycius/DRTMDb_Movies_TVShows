@@ -36,6 +36,7 @@ public class MovieActivity extends AppCompatActivity {
     private TextView movieOverviewLabel;
     private TextView movieReleaseDate;
     private TextView trailersLabel;
+    private TextView reviewsLabel;
     private RatingBar movieRating;
     private LinearLayout movieTrailers;
     private LinearLayout movieReviews;
@@ -84,6 +85,7 @@ public class MovieActivity extends AppCompatActivity {
         movieTrailers = findViewById(R.id.lly_Movie_Trailers);
         movieReviews = findViewById(R.id.lly_Movie_Reviews);
         trailersLabel = findViewById(R.id.txt_Trailers_Label);
+        reviewsLabel = findViewById(R.id.txt_Reviews_Label);
     }
 
     public void showMovieDetails () {
@@ -105,6 +107,7 @@ public class MovieActivity extends AppCompatActivity {
                 }
                 getTrailers(movieDtls);
                 progressDialog.dismiss();
+                getReview(movieDtls);
             }
 
             @Override
@@ -169,6 +172,29 @@ public class MovieActivity extends AppCompatActivity {
     private void showTrailer(String url) {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         startActivity(intent);
+    }
+
+    private void getReview(final MovieRepositoryGetMovieDetails movieDetails){
+        retrofitClientInstance.getReviews(movieDetails.getId(), new OnGetReviewsCallback() {
+            @Override
+            public void onSuccess(List<ReviewRepositoryGetContent> review) {
+                reviewsLabel.setVisibility(View.VISIBLE);
+                movieReviews.removeAllViews();
+                for(ReviewRepositoryGetContent reviewDetails: review){
+                    View parent = getLayoutInflater().inflate(R.layout.review, movieReviews, false);
+                    TextView author = parent.findViewById(R.id.reviewAuthor);
+                    TextView content = parent.findViewById(R.id.reviewContent);
+                    author.setText(reviewDetails.getAuthor());
+                    content.setText(reviewDetails.getContent());
+                    movieReviews.addView(parent);
+                }
+            }
+
+            @Override
+            public void onError() {
+                // no actions
+            }
+        });
     }
 
 

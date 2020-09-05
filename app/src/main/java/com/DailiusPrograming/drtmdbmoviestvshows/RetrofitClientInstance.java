@@ -154,7 +154,29 @@ public class RetrofitClientInstance {
                 });
     }
 
+    public void getReviews (int movieId, final OnGetReviewsCallback callback){
+        itfApi.getReviews(movieId, API_KEY, LANGUAGE)
+                .enqueue(new Callback<ReviewRepository>() {
+                    @Override
+                    public void onResponse(@NotNull Call<ReviewRepository> call, @NotNull Response<ReviewRepository> response) {
+                        if(response.isSuccessful()){
+                            ReviewRepository reviewRepository =response.body();
+                            if(reviewRepository != null && reviewRepository.getReview() != null){
+                                callback.onSuccess(reviewRepository.getReview());
+                            }else{
+                                callback.onError();
+                            }
+                        }else{
+                            callback.onError();
+                        }
+                    }
 
+                    @Override
+                    public void onFailure(@NotNull Call<ReviewRepository> call, @NotNull Throwable t) {
+                        callback.onError();
+                    }
+                });
+    }
 
 
 }
