@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
+// Pavadinimas. MoviesResponse
 public class MovieRepository {
     @SerializedName("page")
     @Expose

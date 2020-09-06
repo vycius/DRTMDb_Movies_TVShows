@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
+// Pavadinimas. Geriau pvz: MovieReviewsResponse ar ReviewsResponse ...
 public class ReviewRepository {
     @SerializedName("results")
     @Expose

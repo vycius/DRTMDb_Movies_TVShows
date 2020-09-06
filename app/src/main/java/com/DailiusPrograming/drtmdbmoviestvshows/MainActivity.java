@@ -42,6 +42,9 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.tlb_Toolbar);
         setSupportActionBar(toolbar);
 
+        // Siūlau vietoj ProgressDialog naudoti Circular progress indicators
+        // https://material.io/components/progress-indicators#circular-progress-indicators
+        // Šitaip neblokuosi UI ir bus paprasčiau susidoroti su keletu loading statų
         progressDialog = new ProgressDialog(MainActivity.this);
         progressDialog.setMessage("Loading....");
         progressDialog.show();
@@ -74,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
     private void setupOnScrollListener() {
         final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recyclerViewList.setLayoutManager(linearLayoutManager);
+        // Būtų gerai jį ir panaikinti su removeOnScrollListener
         recyclerViewList.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
@@ -142,6 +146,7 @@ public class MainActivity extends AppCompatActivity {
          });
     }
 
+    // Erroro atveju vartotojas matys viso labo
     private void errorToast() {
         progressDialog.dismiss();
         Toast.makeText(MainActivity.this, "Something went wrong...Please try later!",
@@ -159,6 +164,7 @@ public class MainActivity extends AppCompatActivity {
 
                 switch (item.getItemId()) {
                     case R.id.popular:
+                        // Tiesiog perduok  sortBy į showMovies.
                         sortBy =  RetrofitClientInstance.POPULAR;
                         showMovies(currentPage);
                         return true;

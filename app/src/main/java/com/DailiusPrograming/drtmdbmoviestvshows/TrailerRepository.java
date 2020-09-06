@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
+// Pavadinimas pvz: TrailersResponse
 public class TrailerRepository {
     @SerializedName("results")
     @Expose

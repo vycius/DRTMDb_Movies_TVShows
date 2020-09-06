@@ -3,6 +3,7 @@ package com.DailiusPrograming.drtmdbmoviestvshows;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+// Pavadinimas. Tiesiog MovieReview ar Review
 public class ReviewRepositoryGetContent {
     @SerializedName("author")
     @Expose

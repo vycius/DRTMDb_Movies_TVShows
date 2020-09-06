@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
+// GenresResponse
 public class GenreRepository {
     @SerializedName("genres")
     @Expose

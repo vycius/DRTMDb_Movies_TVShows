@@ -16,6 +16,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tlb_Toolbar"/>
 
+    <!-- Palik defaultinį elevation ir nebus warning bei geriau atrodys -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/tlb_Toolbar"
         android:layout_width="0dp"

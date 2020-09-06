@@ -5,12 +5,13 @@ import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
+// Pavadinimas iš kurio negalima suprasti kas čia bus. Iš geresnių pvz: MoviesAPI
 public interface InterfaceDataService {
     @GET("movie/popular")
     Call<MovieRepository> getPopularMovies(
-      @Query("api_key") String apiKey,
-      @Query("language") String language,
-      @Query("page") int page);
+            @Query("api_key") String apiKey,
+            @Query("language") String language,
+            @Query("page") int page);
 
     @GET("movie/top_rated")
     Call<MovieRepository> getTopRatedMovies(
@@ -55,6 +56,7 @@ public interface InterfaceDataService {
     @GET("movie/{movie_id}/reviews")
     Call<ReviewRepository> getReviews(
             @Path("movie_id") int id,
+            // apiKey
             @Query("api_key") String apiKEy,
             @Query("language") String language
     );

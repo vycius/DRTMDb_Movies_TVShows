@@ -1,12 +1,17 @@
 package com.DailiusPrograming.drtmdbmoviestvshows;
 
+import androidx.annotation.Nullable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
+// Tiesiog Movie ar MovieDetails
 public class MovieRepositoryGetMovieDetails {
     @SerializedName("id")
+    // Tavo atveju Expose niekur nėra reikalinga. Pašalinčiau iš visur jį. Tačiau nėra problemos jei jis ir yra.
+    // https://stackoverflow.com/questions/34752200/gson-expose-vs-serializedname
     @Expose
     private Integer id;
     @SerializedName("title")
@@ -14,18 +19,21 @@ public class MovieRepositoryGetMovieDetails {
     private String title;
     @SerializedName("release_date")
     @Expose
+    // releaseDate be _
     private String release_date;
     @SerializedName("vote_average")
     @Expose
     private float rating;
     @SerializedName("poster_path")
     @Expose
+    @Nullable
     private String posterPath;
     @SerializedName("overview")
     @Expose
     private String overview;
     @SerializedName("backdrop_path")
     @Expose
+    @Nullable
     private String backdrop;
     @SerializedName("genre_ids")
     @Expose
@@ -35,7 +43,7 @@ public class MovieRepositoryGetMovieDetails {
     private List<GenreRepositoryGetGenreNames> genres;
 
 
-
+    // Tai kas nenaudojama trink lauk
     public MovieRepositoryGetMovieDetails(Integer id, String title, String release_date) {
         this.id = id;
         this.title = title;

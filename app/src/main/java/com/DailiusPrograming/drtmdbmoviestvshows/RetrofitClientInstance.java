@@ -10,8 +10,10 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+// Pavadinimas. Tiesiog MoviesAPIClient ar kažkas panašaus tiktų kurkas geriau
 public class RetrofitClientInstance {
 
+    // Kurkas būtų paprasčiau jei POPULAR, TOP_RATED, UPCOMING, NOW_PLAYING būtų enumai
     public static final String POPULAR = "popular";
     public static final String TOP_RATED = "top_rated";
     public static final String UPCOMING = "upcoming";
@@ -24,7 +26,7 @@ public class RetrofitClientInstance {
     private InterfaceDataService itfApi;
     private static RetrofitClientInstance retrofitClientInstance;
 
-    private RetrofitClientInstance(InterfaceDataService itfApi){
+    private RetrofitClientInstance(InterfaceDataService itfApi) {
         this.itfApi = itfApi;
     }
 
@@ -33,7 +35,7 @@ public class RetrofitClientInstance {
         if (retrofitClientInstance == null) {
 
             HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
-            loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+            loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
 
             OkHttpClient okHttpClient = new OkHttpClient.Builder()
                     .addInterceptor(loggingInterceptor)
@@ -52,16 +54,18 @@ public class RetrofitClientInstance {
     }
 
 
-    public void getMovieDtls(int movieId, final OnGetMovieCallback callback){
+    // Geriau netrumpink getMovieDetails
+    public void getMovieDtls(int movieId, final OnGetMovieCallback callback) {
         itfApi.getMovie(movieId, API_KEY, LANGUAGE)
                 .enqueue(new Callback<MovieRepositoryGetMovieDetails>() {
                     @Override
                     public void onResponse(@NotNull Call<MovieRepositoryGetMovieDetails> call, @NotNull Response<MovieRepositoryGetMovieDetails> response) {
-                        if(response.isSuccessful()){
+                        if (response.isSuccessful()) {
                             MovieRepositoryGetMovieDetails movieDtls = response.body();
                             callback.onSuccess(movieDtls);
                         }
                     }
+
                     @Override
                     public void onFailure(@NotNull Call<MovieRepositoryGetMovieDetails> call, @NotNull Throwable t) {
                         callback.onError();
@@ -69,37 +73,37 @@ public class RetrofitClientInstance {
                 });
     }
 
-    public void getGenres(final OnGetGenresCallback callback){
+    public void getGenres(final OnGetGenresCallback callback) {
         itfApi.getGenres(API_KEY, LANGUAGE)
                 .enqueue(new Callback<GenreRepository>() {
-            @Override
-            public void onResponse(@NotNull Call<GenreRepository> call, @NotNull Response<GenreRepository> response) {
-                if(response.isSuccessful()){
-                    GenreRepository genreRepository = response.body();
-                    assert genreRepository != null;
-                    callback.onSuccess(genreRepository.getGenres());
-                }else {
-                    callback.onError();
-                }
-            }
+                    @Override
+                    public void onResponse(@NotNull Call<GenreRepository> call, @NotNull Response<GenreRepository> response) {
+                        if (response.isSuccessful()) {
+                            GenreRepository genreRepository = response.body();
+                            assert genreRepository != null;
+                            callback.onSuccess(genreRepository.getGenres());
+                        } else {
+                            callback.onError();
+                        }
+                    }
 
-            @Override
-            public void onFailure(@NotNull Call<GenreRepository> call, @NotNull Throwable t) {
-                callback.onError();
-            }
-        });
+                    @Override
+                    public void onFailure(@NotNull Call<GenreRepository> call, @NotNull Throwable t) {
+                        callback.onError();
+                    }
+                });
     }
 
-    public void showMovies (int page, String sortBy, final OnGetMoviesCallback callback){
+    public void showMovies(int page, String sortBy, final OnGetMoviesCallback callback) {
         Callback<MovieRepository> call = new Callback<MovieRepository>() {
             @Override
             public void onResponse(@NotNull Call<MovieRepository> call, Response<MovieRepository> response) {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
                     MovieRepository movieRepository = response.body();
                     assert movieRepository != null;
                     callback.onSuccess(movieRepository.getPage(), movieRepository.getMovies());
 
-                }else {
+                } else {
                     callback.onError();
                 }
             }
@@ -109,7 +113,7 @@ public class RetrofitClientInstance {
                 callback.onError();
             }
         };
-        switch (sortBy){
+        switch (sortBy) {
             case TOP_RATED:
                 itfApi.getTopRatedMovies(API_KEY, LANGUAGE, page)
                         .enqueue(call);
@@ -130,19 +134,19 @@ public class RetrofitClientInstance {
 
     }
 
-    public void getTrailers(int movieId, final OnGetTrailersCallback callback){
-        itfApi.getTrailers(movieId,API_KEY, LANGUAGE)
+    public void getTrailers(int movieId, final OnGetTrailersCallback callback) {
+        itfApi.getTrailers(movieId, API_KEY, LANGUAGE)
                 .enqueue(new Callback<TrailerRepository>() {
                     @Override
                     public void onResponse(@NotNull Call<TrailerRepository> call, @NotNull Response<TrailerRepository> response) {
-                        if(response.isSuccessful()){
+                        if (response.isSuccessful()) {
                             TrailerRepository trailerRepository = response.body();
-                            if(trailerRepository != null && trailerRepository.getTrailers() != null){
+                            if (trailerRepository != null && trailerRepository.getTrailers() != null) {
                                 callback.onSuccess(trailerRepository.getTrailers());
-                            }else {
+                            } else {
                                 callback.onError();
                             }
-                        }else {
+                        } else {
                             callback.onError();
                         }
                     }
@@ -154,19 +158,19 @@ public class RetrofitClientInstance {
                 });
     }
 
-    public void getReviews (int movieId, final OnGetReviewsCallback callback){
+    public void getReviews(int movieId, final OnGetReviewsCallback callback) {
         itfApi.getReviews(movieId, API_KEY, LANGUAGE)
                 .enqueue(new Callback<ReviewRepository>() {
                     @Override
                     public void onResponse(@NotNull Call<ReviewRepository> call, @NotNull Response<ReviewRepository> response) {
-                        if(response.isSuccessful()){
-                            ReviewRepository reviewRepository =response.body();
-                            if(reviewRepository != null && reviewRepository.getReview() != null){
+                        if (response.isSuccessful()) {
+                            ReviewRepository reviewRepository = response.body();
+                            if (reviewRepository != null && reviewRepository.getReview() != null) {
                                 callback.onSuccess(reviewRepository.getReview());
-                            }else{
+                            } else {
                                 callback.onError();
                             }
-                        }else{
+                        } else {
                             callback.onError();
                         }
                     }

@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Rekomenduočiau, kad packagas būtų be didžiųjų raidžių.
+https://docs.oracle.com/javase/tutorial/java/package/namingpkgs.html
+Package names are written in all lower case to avoid conflict with the names of classes or interfaces.
+ -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.DailiusPrograming.drtmdbmoviestvshows">
     <!-- Internet Permission -->
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <!-- Nebereikalo yra roundIcon ir icon ant telefonų, kurie naudoja roundIcon iconiukas atrodo nelabai -->
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_app_icon"

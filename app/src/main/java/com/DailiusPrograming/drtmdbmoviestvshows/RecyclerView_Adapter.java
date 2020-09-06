@@ -17,6 +17,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+// Klasės pavadinimas neturėtų turėti underscoro _ taip pat jis turėtų kažką pasakyti apie tai kas čia bus viduje
+// Pvz: MoviesRecyclerViewAdapter ar MoviesListAdapter ar dar kažką
 public class RecyclerView_Adapter extends RecyclerView.Adapter<RecyclerView_Adapter.CustomViewHolder> {
     private List<MovieRepositoryGetMovieDetails> movieList;
     private List<GenreRepositoryGetGenreNames> allGenres;
@@ -86,7 +88,9 @@ public class RecyclerView_Adapter extends RecyclerView.Adapter<RecyclerView_Adap
             title.setText(movies.getTitle());
             rating.setText(String.valueOf(movies.getRating()));
             genres.setText(distGenres(movies.getGenreIds()));
+            // Urlai išmėtyti po visą kodą. Geriausia būtų juos laikyti vienoje vietoje ir esant reikalui lengvai pakeisti
             String IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w300";
+            // Ne visi filmai turi :) Nesuhandlintas casas, kai poster yra null
             Glide.with(itemView)
                     .load(IMAGE_BASE_URL + movies.getPosterPath())
                     .apply(RequestOptions.placeholderOf(R.color.colorPrimary))
@@ -96,6 +100,9 @@ public class RecyclerView_Adapter extends RecyclerView.Adapter<RecyclerView_Adap
 
         private String distGenres(List<Integer> genreIds) {
             List<String> movieGenres = new ArrayList<>();
+            // Yra galimybė super paprastai padaryti t.y per vieną eilutę, tačiau ten būtų visiškai naujas konceptas
+            // Tad supaprastinant dabartinę versiją gali išvengti vieno for
+            // Egzistuoja genreIds.contains() metodas, kuris patikrina ar yra liste toks itemas
             for (Integer genreId : genreIds) {
                 for (GenreRepositoryGetGenreNames genre : allGenres) {
                     if (genre.getId() == genreId) {
